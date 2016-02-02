@@ -3,7 +3,7 @@ from django.core import mail
 from .message import EmailMessage
 
 
-def send_mail(template_name, context, from_email, recipient_list,
+def send_mail(templatename, context, from_email, recipient_list,
               fail_silently=False, auth_user=None, auth_password=None,
               connection=None, *args, **kwargs):
     """
@@ -20,5 +20,5 @@ def send_mail(template_name, context, from_email, recipient_list,
                                                    password=auth_password,
                                                    fail_silently=fail_silently)
     return EmailMessage(
-        template_name, context, from_email, recipient_list,
+        templatename, context, from_email, recipient_list,
         connection=connection, *args, **kwargs).send()

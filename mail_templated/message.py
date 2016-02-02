@@ -6,7 +6,7 @@ from django.template.loader import get_template
 class EmailMessage(mail.EmailMultiAlternatives):
     """Extends standard EmailMessage class with ability to use templates"""
 
-    def __init__(self, template_name=None, context={}, *args, **kwargs):
+    def __init__(self, templatename=None, context={}, *args, **kwargs):
         """
         Initialize single templated email message (which can be sent to
         multiple recipients).
@@ -19,15 +19,15 @@ class EmailMessage(mail.EmailMultiAlternatives):
         The class tries to provide interface as close to the standard Django
         classes as possible.
         The argument list is the same as in the base class except of two first
-        parameters 'subject' and 'body' which are replaced with 'template_name'
+        parameters 'subject' and 'body' which are replaced with 'templatename'
         and 'context'. However you still can pass subject and body as keyword
         arguments to provide some static content if needed.
 
         Arguments:
-            :param template_name: A name of template that extends
+            :param templatename: A name of template that extends
                 `mail_templated/base.tpl` with blocks 'subject', 'body' and
                  'html'.
-            :type template_name: str
+            :type templatename: str
             :param context: A dictionary to be used for template rendering.
             :type context: dict
 
@@ -42,7 +42,7 @@ class EmailMessage(mail.EmailMultiAlternatives):
 
         Other arguments are passed to the base class method as is.
         """
-        self.template_name = template_name
+        self.templatename = templatename
         self.context = context
         subject = kwargs.pop('subject', None)
         body = kwargs.pop('body', None)
@@ -59,22 +59,22 @@ class EmailMessage(mail.EmailMultiAlternatives):
     def is_rendered(self):
         return self._is_rendered
 
-    def load_template(self, template_name):
+    def load_template(self, templatename):
         """
         Load the specified template
 
         Arguments:
-            :param template_name: A name of template with optional blocks
+            :param templatename: A name of template with optional blocks
                 'subject', 'body' and 'html'.
-            :type template_name: str
+            :type templatename: str
         """
-        self.template = get_template(template_name)
+        self.template = get_template(templatename)
 
     def render(self):
         """Render email with the current context"""
         # Load template if it is not loaded yet.
         if not self.template:
-            self.load_template(self.template_name)
+            self.load_template(self.templatename)
         result = self.template.render(Context(self.context))
         # Don't overwrite default static value with empty one.
         self.subject = self._get_block(result, 'subject') or self.subject
